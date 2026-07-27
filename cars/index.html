@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Vehicle Search URL Builder</title>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+	<link rel="stylesheet" href="style.css">
+</head>
+<body class="w3-light-grey">
+	
+	<!-- Title bar with theme selector -->
+	<div class="title-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+		<h1 style="margin: 0; font-size: 28px; font-weight: bold;">Vehicle Search</h1>
+		
+		<div style="display: flex; align-items: center; gap: 8px;">
+			<i class="ti ti-palette" style="font-size: 24px; color: #555;"></i>
+			<select id="themeSelector" class="w3-select w3-border w3-round w3-white" style="width: auto; padding: 6px 12px; cursor: pointer; font-weight: bold;">
+				<option value="theme-blue">Blue (Default)</option>
+				<option value="theme-green">Forest Green</option>
+				<option value="theme-red">Crimson Red</option>
+				<option value="theme-dark">Dark Mode</option>
+			</select>
+		</div>
+	</div>
+
+	<!-- About Section -->
+	<div class="w3-panel w3-pale-blue w3-leftbar w3-border-blue w3-round" style="margin: 0 auto 16px auto; padding: 12px 16px; font-size: 14px;">
+		<p style="margin: 0;">
+			<strong>About:</strong> This tool builds advanced AutoTrader search URLs. Select your parameters below and click <b>Search</b> to view the results instantly, or <b>Generate Link</b> to copy the custom URL to your clipboard.
+		</p>
+	</div>
+
+	<form id="paramForm" class="form-container">
+	
+		<!-- Location -->
+		<fieldset>
+			<legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-map-pin"></i> Location
+				</span>
+			</legend>
+			<div class="content" style="display: block;">
+				<div class="pill-group">
+					<label class="toggle-pill"><input type="radio" id="LocationNational" name="locationType" value="national" checked><span>National</span></label>
+					<label class="toggle-pill"><input type="radio" id="LocationRegional" name="locationType" value="regional"><span>Regional</span></label>
+				</div>
+				
+				<div id="postcodeSection" hidden>
+					<div class="inline-group">
+						<label for="postcode">Postcode</label>
+						<input type="text" id="postcode" name="postcode" class="w3-input w3-border w3-round" autocomplete="postal-code" placeholder="e.g. TS10 1AB" maxlength="8">
+					</div>
+				</div>
+
+				<div id="radiusSection" hidden>
+					<div class="slider-group">
+						<label for="radius">Search range: <output id="radiusOutput" for="radius">15</output> miles</label>
+						<input type="range" id="radius" name="radius" min="5" max="250" step="5" value="15">
+					</div>
+				</div>
+			</div>
+		</fieldset>
+
+		<!-- Seller type -->
+		<fieldset>
+			<legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-building-store"></i> Seller Type
+				</span>
+			</legend>
+			<div class="content" style="display: block;">
+				<div class="pill-group">
+					<label class="toggle-pill"><input type="radio" id="SellerAny" name="seller-type" value="" checked><span>Any</span></label>
+					<label class="toggle-pill"><input type="radio" id="SellerPrivate" name="seller-type" value="private"><span>Private</span></label>
+					<label class="toggle-pill"><input type="radio" id="SellerTrade" name="seller-type" value="trade"><span>Trade</span></label>
+				</div>
+				<div class="checkbox-group">
+					<input type="checkbox" class="w3-check" id="isUsedApproved" name="ma" value="Y">
+					<label for="isUsedApproved">Manufacturer Approved</label>
+				</div>
+			</div>
+		</fieldset>
+
+		<!-- Price -->
+		<fieldset>
+			<legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-currency-pound"></i> Price
+				</span>
+			</legend>
+			<div class="content" style="display: block;">
+				<div class="pill-group">
+					<label class="toggle-pill"><input type="radio" id="paymentTypeTotal" name="price_search_type" value="total" checked><span>Pay in full</span></label>
+					<label class="toggle-pill"><input type="radio" id="paymentTypeMonthly" name="price_search_type" value="monthly"><span>Pay monthly</span></label>
+				</div>
+
+				<!-- Pay in full section -->
+				<div id="payTotalFields">
+					<div class="field-row">
+						<div class="dropdown-group">
+							<label for="minPrice">Minimum</label>
+							<select id="minPrice" class="w3-select w3-border w3-round" name="price-from">
+								<option value="">Any</option>
+							</select>
+						</div>
+						<div class="dropdown-group">
+							<label for="maxPrice">Maximum</label>
+							<select id="maxPrice" class="w3-select w3-border w3-round" name="price-to">
+								<option value="">Any</option>
+							</select>
+						</div>
+					</div>
+				</div>	
+
+				<!-- Pay monthly section -->
+				<div id="payMonthlyFields" hidden>
+					<div class="field-row">
+						<div class="dropdown-group">
+							<label for="minPriceRange">Min/month</label>
+							<select id="minPriceRange" class="w3-select w3-border w3-round" name="min-monthly-price">
+								<option value="">Any</option>
+							</select>
+						</div>
+						<div class="dropdown-group">
+							<label for="maxPriceRange">Max/month</label>
+							<select id="maxPriceRange" class="w3-select w3-border w3-round" name="max-monthly-price">
+								<option value="">Any</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="inline-group">
+						<label for="depositAmount">Deposit</label>
+						<input type="text" id="depositAmount" name="deposit" class="w3-input w3-border w3-round" placeholder="Any" pattern="[0-9]*" inputmode="numeric">
+					</div>	
+					
+					<div class="inline-group">
+						<label for="financeTerm">Term</label>
+						<select id="term" class="w3-select w3-border w3-round" name="term">
+							<option value="12">12 months</option>
+							<option value="24">24 months</option>
+							<option value="36">36 months</option>
+							<option value="48">48 months</option>
+							<option value="60">60 months</option>
+						</select>
+					</div>
+
+					<div class="inline-group">
+						<label for="yearlyMileage">Mileage</label>
+						<select id="yearlyMileage" class="w3-select w3-border w3-round" name="yearly-mileage">
+							<option value="5000">5,000 miles</option>
+							<option value="8000">8,000 miles</option>
+							<option value="10000">10,000 miles</option>
+							<option value="12000">12,000 miles</option>
+							<option value="15000">15,000 miles</option>
+							<option value="20000">20,000 miles</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+
+		<!-- Details -->
+		<fieldset>
+			<legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-list-details"></i> Details
+				</span>
+			</legend>
+			<div class="content" style="display: block;">
+				
+				<!-- Makes and Models -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Make and model</label>
+					
+					<div style="display: none;"> 
+						<div class="checkbox-group">
+							<input type="checkbox" class="w3-check" id="anyMake" checked> 
+							<label for="anyMake">Any make</label>
+						</div>
+
+						<div id="makeSelector" hidden>
+							<div class="pill-group">
+								<label class="toggle-pill"><input type="radio" name="makeMode" value="include" checked><span>Include Makes</span></label>
+								<label class="toggle-pill"><input type="radio" name="makeMode" value="exclude"><span>Exclude Makes</span></label>
+							</div>
+							
+							<div class="inline-group">
+								<label for="makeSearch">Search</label>
+								<input type="search" id="makeSearch" class="w3-input w3-border w3-round" placeholder="Find makes" autocomplete="off">
+							</div>
+
+							<div id="makeOptions" class="checkbox-options" role="group" aria-label="Makes">
+								<p class="w3-padding w3-text-grey">Loading makes…</p>
+							</div>
+
+							<div class="selection-toolbar">
+								<span id="makeCount" aria-live="polite">No makes selected</span>
+								<button type="button" id="clearMakes" class="w3-button w3-tiny w3-round w3-light-grey" hidden>Clear</button>
+							</div>
+
+							<div id="selectedMakesDisplay" class="selected-items" aria-label="Selected makes" hidden></div>
+						</div>
+
+						<!-- Models -->
+						<div id="modelSection" class="w3-margin-top" hidden>
+							<div class="checkbox-group">
+								<input type="checkbox" class="w3-check" id="anyModel" checked>
+								<label for="anyModel">Any model</label>
+							</div>
+
+							<div id="modelSelector" hidden>
+								<div class="pill-group">
+									<label class="toggle-pill"><input type="radio" name="modelMode" value="include" checked><span>Include Models</span></label>
+									<label class="toggle-pill"><input type="radio" name="modelMode" value="exclude"><span>Exclude Models</span></label>
+								</div>
+								
+								<div class="inline-group">
+									<label for="modelSearch">Search</label>
+									<input type="search" id="modelSearch" class="w3-input w3-border w3-round" placeholder="Find models" autocomplete="off">
+								</div>
+								
+								<div id="modelOptions" class="model-options" role="group" aria-label="Models"></div>
+
+								<div class="selection-toolbar">
+									<span id="modelCount" aria-live="polite">No models selected</span>
+									<button type="button" id="clearModels" class="w3-button w3-tiny w3-round w3-light-grey" hidden>Clear</button>
+								</div>
+
+								<div id="selectedModelsDisplay" class="selected-items" aria-label="Selected models" hidden></div>
+							</div>
+						</div>
+
+						<p id="vehicleDataError" class="w3-text-red" role="alert" hidden></p>
+					</div>
+				 </div>
+
+				<!-- Mileage -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Mileage</label>
+					<div style="display: none;">
+						<div class="checkbox-group">
+							<input type="checkbox" class="w3-check" id="anyMileage" checked>
+							<label for="anyMileage">Any mileage</label>
+						</div>
+
+						<div id="mileage-sliders" class="w3-margin-top">
+							<div class="slider-group">
+								<label for="minMileage">Minimum: <output id="minDisplay">0</output></label>
+								<input type="range" id="minMileage" name="minimum-mileage" min="0" max="200000" step="5000" value="0">
+							</div>
+							<div class="slider-group">
+								<label for="maxMileage">Maximum: <output id="maxDisplay">10000</output></label>
+								<input type="range" id="maxMileage" name="maximum-mileage" min="0" max="200000" step="5000" value="10000">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Year -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Year</label>
+					<div style="display: none;">
+						<div class="field-row w3-margin-top">
+							<div class="dropdown-group">
+								<label for="minYear">Minimum</label>
+								<select name="year-from" id="minYear" class="w3-select w3-border w3-round">
+									<option value="">Any</option>
+									<option value="new">Brand New</option>
+								</select>
+							</div>
+							<div class="dropdown-group">
+								<label for="maxYear">Maximum</label>
+								<select name="year-to" id="maxYear" class="w3-select w3-border w3-round">
+									<option value="">Any</option>
+									<option value="new">Brand New</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+
+		<!-- Features -->
+		<fieldset>
+			<legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-car"></i> Features
+				</span>
+			</legend>
+			<div class="content" style="display: block;">
+				<!-- Body Type -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Body Type</label>
+					<div style="display: none;">
+						<div class="pill-group w3-margin-top">
+							<label class="toggle-pill"><input type="checkbox" id="BodyAny" name="body-type" value="" checked><span>Any</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodyConvertible" name="body-type" value="Convertible"><span>Convertible</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodyCoupe" name="body-type" value="Coupe"><span>Coupe</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodyEstate" name="body-type" value="Estate"><span>Estate</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodyHatchback" name="body-type" value="Hatchback"><span>Hatchback</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodyMPV" name="body-type" value="MPV"><span>MPV</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodyPickup" name="body-type" value="Pickup"><span>Pickup</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodySaloon" name="body-type" value="Saloon"><span>Saloon</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodySUV" name="body-type" value="SUV"><span>SUV</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="BodyCamper" name="body-type" value="Camper"><span>Camper</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="BodyCarDerivedVan" name="body-type" value="Car Derived Van"><span>Car Derived Van</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="BodyCombiVan" name="body-type" value="Combi Van"><span>Combi Van</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="BodyLimousine" name="body-type" value="Limousine"><span>Limousine</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="BodyMinibus" name="body-type" value="Minibus"><span>Minibus</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="BodyPanelVan" name="body-type" value="Panel Van"><span>Panel Van</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="BodyWindowVan" name="body-type" value="Window Van"><span>Window Van</span></label>
+						</div>
+					</div>
+				</div>	
+
+				<!-- Colour -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Colour</label>
+					<div style="display: none;">
+						<div class="pill-group w3-margin-top">
+                            <label class="toggle-pill"><input type="checkbox" id="ColourBlack" name="colour" value="Black"><span>Black</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourBlue" name="colour" value="Blue"><span>Blue</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourGrey" name="colour" value="Grey"><span>Grey</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourWhite" name="colour" value="White"><span>White</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourSilver" name="colour" value="Silver"><span>Silver</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourRed" name="colour" value="Red"><span>Red</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourGreen" name="colour" value="Green"><span>Green</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourBeige" name="colour" value="Beige"><span>Beige</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourBronze" name="colour" value="Bronze"><span>Bronze</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourBrown" name="colour" value="Brown"><span>Brown</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourGold" name="colour" value="Gold"><span>Gold</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourMulticolour" name="colour" value="Multicolour"><span>Multicolour</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourOrange" name="colour" value="Orange"><span>Orange</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourPink" name="colour" value="Pink"><span>Pink</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourPurple" name="colour" value="Purple"><span>Purple</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="ColourYellow" name="colour" value="Yellow"><span>Yellow</span></label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Doors -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Doors</label>
+					<div style="display: none;">
+						<div class="pill-group w3-margin-top">
+                            <label class="toggle-pill"><input type="checkbox" id="Doors0" name="quantity-of-doors" value="0"><span>0</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Doors2" name="quantity-of-doors" value="2"><span>2</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Doors3" name="quantity-of-doors" value="3"><span>3</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Doors4" name="quantity-of-doors" value="4"><span>4</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Doors5" name="quantity-of-doors" value="5"><span>5</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Doors6" name="quantity-of-doors" value="6"><span>6</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Doors7" name="quantity-of-doors" value="7"><span>7</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Doors8" name="quantity-of-doors" value="8"><span>8</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Doors9" name="quantity-of-doors" value="9"><span>9</span></label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Gearbox Type -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Gearbox Type</label>
+					<div style="display: none;">
+						<div class="pill-group w3-margin-top">
+							<label class="toggle-pill"><input type="radio" id="GearboxAny" name="transmission" value="" checked><span>Any</span></label>
+							<label class="toggle-pill"><input type="radio" id="GearboxManual" name="transmission" value="manual"><span>Manual</span></label>
+							<label class="toggle-pill"><input type="radio" id="GearboxAutomatic" name="transmission" value="automatic"><span>Automatic</span></label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Engine Size -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Engine Size (Litres)</label>
+					<div style="display: none;">
+						<div class="checkbox-group">
+							<input type="checkbox" class="w3-check" id="anyEngineSize" checked>
+							<label for="anyEngineSize">Any engine size</label>
+						</div>
+						<div id="engine-size-sliders" class="w3-margin-top">
+							<div class="slider-group">
+								<label for="minEngineSize">Minimum: <output id="minEngineDisplay">0</output> L</label>
+								<input type="range" id="minEngineSize" name="minimum-badge-engine-size" min="0.0" max="8.0" step="0.1" value="0.0">
+							</div>
+							<div class="slider-group">
+								<label for="maxEngineSize">Maximum: <output id="maxEngineDisplay">8</output> L</label>
+								<input type="range" id="maxEngineSize" name="maximum-badge-engine-size" min="0.0" max="8.0" step="0.1" value="8.0">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+		
+		<!-- Fuel -->
+		<fieldset>
+			<legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-gas-station"></i> Fuel
+				</span>
+			</legend>
+			<div class="content" style="display: block;">
+				
+				<!-- Fuel Type -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Fuel Type</label>
+					<div style="display: none;">
+						<div class="pill-group w3-margin-top">
+							<label class="toggle-pill"><input type="checkbox" id="FuelPetrol" name="fuel-type" value="Petrol"><span>Petrol</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="FuelDiesel" name="fuel-type" value="Diesel"><span>Diesel</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="FuelElectric" name="fuel-type" value="Electric"><span>Electric</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="FuelHybridPP" name="fuel-type" value="Petrol Plug-in Hybrid"><span>Petrol Plug-in Hybrid</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="FuelHybridDP" name="fuel-type" value="Diesel Plug-in Hybrid"><span>Diesel Plug-in Hybrid</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="FuelHybridP" name="fuel-type" value="Petrol Hybrid"><span>Petrol Hybrid</span></label>
+							<label class="toggle-pill"><input type="checkbox" id="FuelHybridD" name="fuel-type" value="Diesel Hybrid"><span>Diesel Hybrid</span></label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Battery Range -->
+				<div class="collapsible-box">
+					<label class="collapsible-header">Battery Range</label>
+					<div style="display: none;">
+						<div class="inline-group w3-margin-top">
+							<label for="batteryRange">Range</label>
+							<select name="battery-range" id="batteryRange" class="w3-select w3-border w3-round">
+								<option value="">Any</option>
+								<option value="TO_50">Up to 50 miles</option>
+								<option value="OVER_100">100 miles +</option>
+								<option value="OVER_200">200 miles +</option>
+								<option value="OVER_300">300 miles +</option>
+							</select> 
+						</div>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+
+        <!-- Performance -->
+        <fieldset>
+            <legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-dashboard"></i> Performance
+				</span>
+			</legend>
+            <div class="content" style="display: block;">
+                
+                <!-- Engine Power -->
+                <div class="collapsible-box">
+                    <label class="collapsible-header">Engine Power (BHP)</label>
+                    <div style="display: none;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="w3-check" id="anyEnginePower" checked>
+                            <label for="anyEnginePower">Any engine power</label>
+                        </div>
+                        <div id="engine-power-sliders" class="w3-margin-top">
+                            <div class="slider-group">
+                                <label for="minEnginePower">Minimum: <output id="minPowerDisplay">0</output> BHP</label>
+                                <input type="range" id="minEnginePower" name="min-engine-power" min="0" max="1000" step="20" value="0">
+                            </div>
+                            <div class="slider-group">
+                                <label for="maxEnginePower">Maximum: <output id="maxPowerDisplay">1000</output> BHP</label>
+                                <input type="range" id="maxEnginePower" name="max-engine-power" min="0" max="1000" step="20" value="1000">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acceleration -->
+                <div class="collapsible-box">
+                    <label class="collapsible-header">Acceleration (0-62mph)</label>
+                    <div style="display: none;">
+                        <div class="pill-group w3-margin-top">
+                            <label class="toggle-pill"><input type="checkbox" id="Under4" name="zero-to-60" value="TO_4"><span>0-4 seconds</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="4to6" name="zero-to-60" value="4_TO_6"><span>4-6 seconds</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="6to8" name="zero-to-60" value="6_TO_8"><span>6-8 seconds</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="8to10" name="zero-to-60" value="8_TO_10"><span>8-10 seconds</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="10to12" name="zero-to-60" value="10_TO_12"><span>10-12 seconds</span></label>
+                            <label class="toggle-pill"><input type="checkbox" id="Over12" name="zero-to-60" value="OVER_12"><span>12+ seconds</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Running Costs -->
+        <fieldset>
+            <legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-receipt-2"></i> Running Costs
+				</span>
+			</legend>
+            <div class="content" style="display: block;">
+                
+                <!-- CO2 Emissions -->
+                <div class="collapsible-box">
+                    <label class="collapsible-header">CO2 Emissions (g/km)</label>
+                    <div style="display: none;">
+                        <div class="pill-group w3-margin-top">
+                            <label class="toggle-pill"><input type="radio" name="co2_selection" value="any" checked><span>Any</span></label>
+                            <label class="toggle-pill"><input type="radio" name="co2_selection" value="upto"><span>Up to...</span></label>
+                            <label class="toggle-pill"><input type="radio" name="co2_selection" value="over255"><span>Over 255</span></label>
+                        </div>
+
+                        <div id="co2-slider-container" hidden>
+                            <div class="slider-group">
+                                <label for="co2Slider">Up to: <output id="co2Display">150</output> g/km</label>
+                                <input type="range" id="co2Slider" min="50" max="255" step="5" value="150">
+                            </div>
+                        </div>
+                        <input type="hidden" id="co2FinalValue" name="co2-emissions-cars" value="">
+                    </div>
+                </div>
+
+                <!-- Tax per year -->
+                <div class="collapsible-box">
+                    <label class="collapsible-header">Tax per year</label>
+                    <div style="display: none;">
+                        <div class="pill-group w3-margin-top">
+                            <label class="toggle-pill"><input type="radio" name="tax_selection" value="any" checked><span>Any</span></label>
+                            <label class="toggle-pill"><input type="radio" name="tax_selection" value="upto"><span>Up to...</span></label>
+                            <label class="toggle-pill"><input type="radio" name="tax_selection" value="over500"><span>Over £500</span></label>
+                        </div>
+
+                        <div id="tax-slider-container" hidden>
+                            <div class="slider-group">
+                                <label for="taxSlider">Up to: £<output id="taxDisplay">50</output></label>
+                                <input type="range" id="taxSlider" min="30" max="500" step="10" value="50">
+                            </div>
+                        </div>
+                        <input type="hidden" id="taxFinalValue" name="annual-tax-cars" value="">
+                    </div>
+                </div>
+                
+                <!-- Insurance Group -->
+                <div class="collapsible-box">
+                    <label class="collapsible-header">Insurance Group</label>
+                    <div style="display: none;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="w3-check" id="anyInsurance" checked>
+                            <label for="anyInsurance">Any group</label>
+                        </div>
+
+                        <div id="insurance-slider-container" hidden>
+                            <div class="slider-group">
+                                <label for="insuranceSlider">Up to Group: <output id="insuranceDisplay">1</output></label>
+                                <input type="range" id="insuranceSlider" min="1" max="50" step="1" value="1">
+                            </div>
+                        </div>
+                        <input type="hidden" id="insuranceFinalValue" name="insuranceGroup" value="">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Keywords -->
+        <fieldset>
+            <legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-tags"></i> Keywords
+				</span>
+			</legend>
+            <div class="content" style="display: block;">
+				
+				<p class="w3-small w3-text-dark-grey w3-center" style="margin-top: 0; margin-bottom: 12px; line-height: 1.4;">
+                    Add a keyword to filter results you wish to search for, and click <b>Add</b>. To Exclude a keyword, add a '<b>-</b>' prefix. To remove a keyword, click the '<b>x</b>' next to it.
+                </p>
+				
+                <div class="keyword-group">
+                    <input type="text" id="keywordInput" class="w3-input w3-border w3-round" placeholder="e.g. heated seats" autocomplete="off">
+                    <button type="button" id="btnAddKeyword" class="w3-button w3-blue w3-round">Add</button>
+                </div>
+                <div id="customKeywordsDisplay" class="selected-items" aria-label="Keywords" hidden></div>
+            </div>
+        </fieldset>
+
+		<!-- Sort By -->
+		<fieldset>
+			<legend class="collapsible-header active">
+				<span style="display: flex; align-items: center; gap: 8px;">
+					<i class="ti ti-sort-descending"></i> Sort By
+				</span>
+			</legend>
+			<div class="content" style="display: block;">
+				<div class="inline-group">
+					<label for="sortBy">Order</label>
+					<select id="sortBy" name="sort" class="w3-select w3-border w3-round">
+						<option value="relevance">Relevance</option>
+						<option value="price-asc">Price: Low to High</option>
+						<option value="price-desc">Price: High to Low</option>
+						<option value="distance">Distance</option>
+						<option value="mileage">Mileage</option>
+						<option value="year-desc">Age: Newest to Oldest</option>
+						<option value="year-asc">Age: Oldest to Newest</option>
+						<option value="most-recent">Most recent adverts</option>
+					</select>
+				</div>
+			</div>
+		</fieldset>
+
+		<!-- Actions -->
+         <p id="statusMessage" class="w3-center w3-text-green" role="status" aria-live="polite"></p>
+		<div class="button-group w3-margin-top w3-padding">
+            
+			<button class="w3-button w3-green w3-round-large w3-ripple" type="button" id="btnLaunch">Search</button>
+			<button class="w3-button w3-blue w3-round-large w3-ripple" type="button" id="btnCopy">Generate Link</button>
+			<button class="w3-button w3-red w3-round-large w3-ripple" type="reset">Reset</button>
+		</div>
+
+		<div class="url-group">
+			<input type="text" id="url" class="w3-input w3-border w3-round w3-light-grey" placeholder="Generated URL..." readonly>
+		</div>
+
+		
+	</form>
+
+	<script src="script.js"></script>
+</body>
+</html>
