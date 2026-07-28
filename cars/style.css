@@ -554,3 +554,7 @@ body[class*="theme-"] button[type="reset"] {
     background-color: #f44336 !important;
     color: white !important;
 }
+
+.point {
+    cursor: pointer;
+}
