@@ -13,7 +13,9 @@
 	<!-- Title bar with theme selector -->
 	<div class="title-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
 		<h1 style="margin: 0; font-size: 28px; font-weight: bold;">Vehicle Search</h1>
-		
+
+		<i class="ti ti-help" onclick="document.getElementById('aboutModal').style.display='block'" style="font-size: 24px; color: #555;"></i>
+
 		<div style="display: flex; align-items: center; gap: 8px;">
 			<i class="ti ti-palette" style="font-size: 24px; color: #555;"></i>
 			<select id="themeSelector" class="w3-select w3-border w3-round w3-white" style="width: auto; padding: 6px 12px; cursor: pointer; font-weight: bold;">
@@ -28,7 +30,7 @@
 	<!-- About Section -->
 	<div class="w3-panel w3-pale-blue w3-leftbar w3-border-blue w3-round" style="margin: 0 auto 16px auto; padding: 12px 16px; font-size: 14px;">
 		<p style="margin: 0;">
-			<strong>About:</strong> This tool builds advanced AutoTrader search URLs. Select your parameters below and click <b>Search</b> to view the results instantly, or <b>Generate Link</b> to copy the custom URL to your clipboard. <strong>Note:</strong> if you have the Auto trader you will need to copy/paste the URL into your browser - the Search button launches the app which does not support advanced search queries.
+			Click the help icon above to learn more about how to use this search tool.
 		</p>
 	</div>
 
@@ -616,6 +618,27 @@
 
 		
 	</form>
+
+	<div id="aboutModal" class="w3-modal">
+  		<div class="w3-modal-content">
+    		<div class="w3-container">
+      			<span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+					<h2>About:</h2>
+      				<p>This tool builds advanced AutoTrader search URLs. Select your parameters below and click <b>Search</b> to view the results instantly, or <b>Generate Link</b> to copy the custom URL to your clipboard.</p>
+      				<p><strong>Note:</strong> if you use this on mobile and have the Autotrader app installed you will need to copy/paste the URL into your browser to get the full functionality. THe Autotrader app does not currently support some advanced search queries.</p>
+
+					<h2>How to use:</h2>
+					<p>click on each of the headers to expand the sections and adjust your search criteria.</p>
+					<p>Clicking <b>Search</b> will launch the Autotrader website and display any results that match.</p>
+					<p>Clicking <b>Generate URL</b> will copy the URL to your clipboard and populate the URL and parameters in the text box below the form.</p>
+
+					<h2>Limitations</h2>
+					<p>Selecting the National option currently uses a postcode central to the UK, with no option to adjust this. This may be changed at some point in the future, and was intended to allow for hquicker searches.</p>
+					<p>There is no direct integration with the Autotrader site (their APIs are expensive) so you won't be able to see how many vehicles match your search criteria until you hit Search.</p>
+					<p>The Make/Model data was taken from a UK Government database of all vehicles currently registered / SORN so there are a lot of vehicles not currently listed on Autotrader. I'm hoping to revise this at some point in the future.</p>
+    </div>
+  </div>
+</div>
 
 	<script src="script.js"></script>
 </body>
